@@ -1,0 +1,20 @@
+{
+  "includes": [
+    "../pipeline-commons/CODEGROUPS.json"
+  ],
+  "filemap": [{
+    "**/*": "@@pipeline"
+  }, {
+    "CODE*.json": "@@athenaOwnershipInfo"
+  }],
+  "functionalBlocks": {
+    "@@pipeline": {
+      "owners": ["@@teamFirst"],
+      "additionalApprovers": ["@@teamSecond"]
+    },
+    "@@athenaOwnershipInfo": {
+      "owners": ["mikael@jagekrans.dev"],
+      "additionalApprovers": ["@@teamSecond", "@@teamThird"]
+    }
+  }
+}

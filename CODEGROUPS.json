@@ -1,0 +1,14 @@
+{
+  "groups": {
+    "@@teamFirst": [
+      "mikael@jagekrans.dev",
+      "madeleine@jagekrans.dev"
+    ],
+    "@@teamSecond": [
+      "mikael@jagekrans.dev"
+    ],
+    "@@teamThird": [
+      "madeleine@jagekrans.dev"
+    ]
+  }
+}
