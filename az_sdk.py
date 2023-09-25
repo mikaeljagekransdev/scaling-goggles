@@ -1,5 +1,6 @@
-import subprocess
 import json
+import subprocess
+from subprocess import Popen
 
 AZ_GROUP_BASE_CMD = 'az devops security group'
 
@@ -13,6 +14,13 @@ def run(cmd):
         exit(res.returncode)
 
     return res
+
+
+#  def run_parallel(cmds):
+#      procs = [Popen(i, shell=True) for i in cmds]
+#      for p in procs:
+#          print(f'wait for {p}')
+#          p.wait()
 
 
 def run_and_parse(cmd):
@@ -33,10 +41,22 @@ def get_group_by_name(name):
     return group
 
 
-def create_group(name):
-    cmd = f'{AZ_GROUP_BASE_CMD} create --name "{name}"'
+def _create_group_cmd(name):
+    return f'{AZ_GROUP_BASE_CMD} create --name "{name}"'
 
-    return run(cmd)
+
+def create_group(name):
+    return run(_create_group_cmd(name))
+
+
+#  def create_groups(names):
+#      return run_parallel([_create_group_cmd(n) for n in names])
+
+
+def list_users_in_group(group_id):
+    cmd = f'{AZ_GROUP_BASE_CMD} membership list --id {group_id}'
+
+    return run_and_parse(cmd)
 
 
 def add_user_to_group(email, group_id):
