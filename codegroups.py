@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import argparse
 import json
@@ -33,8 +33,12 @@ for group_name in groups_to_create:
     az_sdk.create_group(group_name)
 
 # NOTE! This might not catch the latest changes due to sync time
+# Add wait for created groups to be available in response?
 existing_groups = get_existing_groups()
 
+# This will currently only work with users.
+# If a group is a member of a group this will not work.
+# To make it work with both, descriptors must be used instead of email ids.
 for group_name in group_names:
     group = next(filter(
                 lambda g: g['displayName'] == group_name,
@@ -43,9 +47,18 @@ for group_name in group_names:
     group_id = group['descriptor']
 
     existing_users = az_sdk.list_users_in_group(group_id).values()
+    print(existing_users)
+    users = set(codegroups[group_name])
     existing_user_emails = {u['mailAddress'] for u in existing_users}
-    users_to_add = set(codegroups[group_name]) - existing_user_emails
+
+    users_to_add = users - existing_user_emails
 
     for user in users_to_add:
         print(f'Adding user "{user}" to group "{group_name}"')
         az_sdk.add_user_to_group(user, group_id)
+
+    users_to_remove = existing_user_emails - users
+
+    for user in users_to_remove:
+        print(f'Removing user "{user}" from group "{group_name}"')
+        az_sdk.remove_user_from_group(user, group_id)
