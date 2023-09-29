@@ -10,9 +10,9 @@ stages:
   jobs:
   - job: Build
     steps:
-    - script: python3 --version
+    - script: pip3 install -g pipenv
 
-    - script: python3 -m pipenv lock -r > requirements.txt
+    - script: pipenv lock -r > requirements.txt
       displayName: 'Create requirements.txt from Pipfile'
 
     - script: pip install -r requirements.txt
