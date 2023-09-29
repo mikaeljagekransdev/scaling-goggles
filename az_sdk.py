@@ -40,6 +40,12 @@ def list_teams():
     return run_and_parse(cmd)
 
 
+def get_team_by_name(name):
+    cmd = f'az devops team show --team {name}'
+
+    return run_and_parse(cmd)
+
+
 def create_team(name):
     cmd = f'az devops team create --name {name}'
 

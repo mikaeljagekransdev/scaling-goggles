@@ -4,6 +4,8 @@ import argparse
 import json
 import az_sdk
 
+CODEOWNER_POSTFIX = '-codeowners'
+
 parser = argparse.ArgumentParser()
 parser.add_argument(
         "-c",
@@ -21,6 +23,10 @@ repo_name = args.repo
 
 def pprint(map):
     print(json.dumps(map, indent=2))
+
+
+def format_team_name(name):
+    return f"{name.replace('@@', '')}{CODEOWNER_POSTFIX}"
 
 
 # Convert codeowners to better format
@@ -50,7 +56,7 @@ def get_identity_id(name):
         return id
 
     if name.startswith("@@"):
-        id = az_sdk.get_group_by_name(name)['originId']
+        id = az_sdk.get_team_by_name(format_team_name(name))['id']
     else:
         id = az_sdk.get_user_by_email(name)['id']
 
