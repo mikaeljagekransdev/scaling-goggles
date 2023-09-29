@@ -10,9 +10,7 @@ stages:
   jobs:
   - job: Build
     steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '3.11'
+    - script: python --version
 
     - script: python -m pipenv lock -r > requirements.txt
       displayName: 'Create requirements.txt from Pipfile'
