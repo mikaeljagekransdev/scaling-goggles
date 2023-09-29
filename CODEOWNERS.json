@@ -6,8 +6,6 @@
     "**/*": "@@pipeline"
   }, {
     "CODE*.json": "@@athenaOwnershipInfo"
-  }, {
-    "*.py": "@@pipeline"
   }],
   "functionalBlocks": {
     "@@pipeline": {
