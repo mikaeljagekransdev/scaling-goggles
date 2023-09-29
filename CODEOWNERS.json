@@ -16,7 +16,7 @@
     },
     "@@athenaOwnershipInfo": {
       "owners": ["mikael@jagekrans.dev"],
-      "additionalApprovers": ["@@teamThird"]
+      "additionalApprovers": ["@@teamSecond", "@@teamThird"]
     }
   }
 }
