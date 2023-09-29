@@ -1,8 +1,7 @@
 trigger:
 - main
 
-pool:
-  ubuntu-22.04
+pool: ubuntu-22.04
 
 stages:
 - stage: Build
