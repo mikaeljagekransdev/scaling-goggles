@@ -111,7 +111,7 @@ def create_required_reviewer_policy(
 
     data = {
         'isBlocking': True,
-        'isEnabled': True,
+        'isEnabled': False,  # TODO: change to true
         'type': {'id': 'fd2167ab-b0be-447a-8ec8-39368250530e'},
         'settings': {
             'creatorVoteCounts': False,
