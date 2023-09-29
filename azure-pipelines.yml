@@ -15,5 +15,12 @@ stages:
         azureSubscription: codeowner-admin
         scriptType: bash
         scriptLocation: inlineScript
+        inlineScript: az devops team show --team teamFirst-codeowners
+
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: codeowner-admin
+        scriptType: bash
+        scriptLocation: inlineScript
         inlineScript: ./codeowners.py -r $(Build.Repository.ID)
 
