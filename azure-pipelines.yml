@@ -10,8 +10,6 @@ stages:
   jobs:
   - job: Build
     steps:
-    - script: pip install requests
-
     - task: AzureCLI@2
       inputs:
         azureSubscription: codeowner-admin
