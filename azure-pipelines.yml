@@ -8,7 +8,10 @@ stages:
   jobs:
   - job: Build
     steps:
-    - script: ./codeowners.py -r pipeline-commons
-      displayName: 'Update codeowners'
-      env:
-        AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: codeowner-admin
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: ./codeowners.py -r pipeline-commons
+
