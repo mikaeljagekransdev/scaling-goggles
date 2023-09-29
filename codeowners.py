@@ -17,7 +17,7 @@ parser.add_argument(
 
 args = parser.parse_args()
 repo_name = args.repo
-identity_name_id_map = {}
+
 
 def pprint(map):
     print(json.dumps(map, indent=2))
@@ -26,20 +26,19 @@ def pprint(map):
 # Convert codeowners to better format
 def format_codeowners(codeowners):
     print('Parsing codeowners file')
+    blocks = codeowners['functionalBlocks']
     pathmap = {}
 
     for f in codeowners['filemap']:
         for path, name in f.items():
-            pathmap[name] = path
+            owners = set(blocks[name]['owners'])
+            additionalApprovers = set(blocks[name]['additionalApprovers'])
+            pathmap[path] = list(owners | additionalApprovers)
 
-    path_group_map = {}
+    return pathmap
 
-    for name, reviewers in codeowners['functionalBlocks'].items():
-        owners = set(reviewers['owners'])
-        additional_approvers = set(reviewers['additionalApprovers'])
-        path_group_map[pathmap[name]] = list(owners | additional_approvers)
 
-    return path_group_map
+identity_name_id_map = {}
 
 
 def get_identity_id(name):
@@ -47,6 +46,7 @@ def get_identity_id(name):
 
     # Check cache for id
     if (id := identity_name_id_map.get(name, None)) is not None:
+        print('found in cache')
         return id
 
     if name.startswith("@@"):

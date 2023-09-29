@@ -34,29 +34,28 @@ def get_access_token():
     return response['accessToken']
 
 
-def list_groups():
-    cmd = 'az devops security group list'
+def list_teams():
+    cmd = 'az devops team list'
 
-    return run_and_parse(cmd)['graphGroups']
-
-
-def get_group_by_name(name):
-    groups = list_groups()
-    group = next(filter(lambda g: g['displayName'] == name, groups), None)
-
-    return group
+    return run_and_parse(cmd)
 
 
-def create_group(name):
-    cmd = f'az devops security group create --name "{name}"'
+def create_team(name):
+    cmd = f'az devops team create --name {name}'
 
     return run(cmd)
 
 
-def list_users_in_group(group_id):
-    cmd = f'az devops security group membership list --id {group_id}'
+def list_users_in_team(name):
+    cmd = f'az devops team list-member --team {name}'
 
     return run_and_parse(cmd)
+
+
+def list_groups():
+    cmd = 'az devops security group list'
+
+    return run_and_parse(cmd)['graphGroups']
 
 
 def add_user_to_group(email, group_id):

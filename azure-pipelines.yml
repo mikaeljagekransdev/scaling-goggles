@@ -1,1 +1,14 @@
-trigger: none
+trigger: main
+
+pool:
+  ubuntu-22.04
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    steps:
+    - script: ./codeowners.py -r pipeline-commons
+      displayName: 'Update codeowners'
+      env:
+        AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
