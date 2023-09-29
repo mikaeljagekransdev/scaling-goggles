@@ -1,5 +1,10 @@
 trigger:
-- main
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - CODEGROUPS.json
 
 pool:
   name: Default
@@ -22,13 +27,5 @@ stages:
         azureSubscription: codeowner-admin
         scriptType: bash
         scriptLocation: inlineScript
-        inlineScript: |
-          env
-
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: codeowner-admin
-        scriptType: bash
-        scriptLocation: inlineScript
-        inlineScript: ./codeowners.py -r $(Build.Repository.ID)
+        inlineScript: ./codegroups.py
 
