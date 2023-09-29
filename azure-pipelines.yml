@@ -10,13 +10,7 @@ stages:
   jobs:
   - job: Build
     steps:
-    - script: pip install --user pipenv
-
-    - script: pipenv lock -r > requirements.txt
-      displayName: 'Create requirements.txt from Pipfile'
-
-    - script: pip install -r requirements.txt
-      displayName: 'Install requirements.txt'
+    - script: pip install requests
 
     - task: AzureCLI@2
       inputs:
