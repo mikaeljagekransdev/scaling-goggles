@@ -22,7 +22,8 @@ stages:
         azureSubscription: codeowner-admin
         scriptType: bash
         scriptLocation: inlineScript
-        inlineScript: az devops team show --team teamFirst-codeowners
+        inlineScript: |
+          env
 
     - task: AzureCLI@2
       inputs:
