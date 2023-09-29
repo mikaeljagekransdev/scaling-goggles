@@ -15,5 +15,5 @@ stages:
         azureSubscription: codeowner-admin
         scriptType: bash
         scriptLocation: inlineScript
-        inlineScript: ./codeowners.py -r pipeline-commons
+        inlineScript: ./codeowners.py -r $(Build.Repository.ID)
 

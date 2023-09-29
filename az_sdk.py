@@ -86,24 +86,12 @@ def get_user_by_email(email):
     return run_and_parse(cmd)
 
 
-def get_repo_by_name(name):
-    cmd = f'az repos show -r {name}'
-
-    return run_and_parse(cmd)
-
-
 def get_repo_policies(repo_id, branch=DEFAULT_BRANCH):
     cmd = f'az repos policy list \
             --repository-id {repo_id} \
             --branch {branch}'
 
     return run_and_parse(cmd)
-
-
-def get_repo_policies_by_repo_name(repo_name):
-    repo = get_repo_by_name(repo_name)
-
-    return get_repo_policies(repo['id'])
 
 
 def create_required_reviewer_policy(

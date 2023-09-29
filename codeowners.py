@@ -14,11 +14,11 @@ parser.add_argument(
         default="./CODEOWNERS.json")
 parser.add_argument(
         "-r",
-        "--repo",
-        help="Repository name")
+        "--repo-id",
+        help="Repository id")
 
 args = parser.parse_args()
-repo_name = args.repo
+repo_id = args.repo_id
 
 
 def pprint(map):
@@ -81,8 +81,7 @@ for path, owners in codeowners.items():
     print(f'converting ids for path "{path}"')
     codeowners[path] = [get_identity_id(name) for name in owners]
 
-repo_id = az_sdk.get_repo_by_name(repo_name)['id']
-policies = az_sdk.get_repo_policies_by_repo_name('pipeline-commons')
+policies = az_sdk.get_repo_policies(repo_id)
 
 for path, owners in codeowners.items():
     policy = get_policy_by_path_filter(policies, path)
