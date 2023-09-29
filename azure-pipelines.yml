@@ -1,7 +1,8 @@
 trigger:
 - main
 
-pool: ubuntu-22.04
+pool:
+  vmImage: ubuntu-22.04
 
 stages:
 - stage: Build
