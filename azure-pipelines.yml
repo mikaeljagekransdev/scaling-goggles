@@ -1,4 +1,5 @@
-trigger: main
+trigger:
+- main
 
 pool:
   ubuntu-22.04
