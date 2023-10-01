@@ -16,7 +16,6 @@ parser.add_argument(
         "-r",
         "--repo-id",
         help="Repository id")
-
 args = parser.parse_args()
 repo_id = args.repo_id
 
@@ -67,6 +66,7 @@ def get_identity_id(name):
 
 
 def get_policy_by_path_filter(policies, path_filter):
+    pprint(policies)
     return next(
         filter(
             lambda p: path_filter in p['settings']['filenamePatterns'],
@@ -81,13 +81,7 @@ for path, owners in codeowners.items():
     print(f'converting ids for path "{path}"')
     codeowners[path] = [get_identity_id(name) for name in owners]
 
-print('codeowners formatted')
-pprint(codeowners)
-
 policies = az_sdk.get_repo_policies(repo_id)
-
-print('policies retrieved')
-pprint(policies)
 
 for path, owners in codeowners.items():
     policy = get_policy_by_path_filter(policies, path)

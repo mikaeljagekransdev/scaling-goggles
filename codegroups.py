@@ -54,7 +54,6 @@ for name in teams_to_create:
 
 # NOTE! This might not catch the latest changes due to sync time
 # Add wait for created groups to be available in response?
-# existing_teams = get_existing_teams()
 existing_groups = get_existing_groups()
 
 for team_name in codegroup_team_names:
