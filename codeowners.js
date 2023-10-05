@@ -1,16 +1,15 @@
 #!/usr/bin/env node
 
-const { on } = require('events');
 const fs = require('fs');
 
-const CODEOWNER_POSTFIX = '-codeowners';
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN;
-const ORG = 'jagekransdev';
-const PROJECT = 'SHB-test';
-const REPO_ID = 'f9205fad-6169-452a-b070-09ef239c891b';
-const DEFAULT_BRANCH = 'main';
+const CODEOWNER_POSTFIX = process.env.CODEOWNER_POSTFIX || '-codeowners';
+const ORG = process.env.ORG || 'jagekransdev';
+const PROJECT = process.env.PROJECT || 'SHB-test';
+const REPO_ID = process.env.REPO_ID || 'f9205fad-6169-452a-b070-09ef239c891b';
+const DEFAULT_BRANCH = process.env.DEFAULT_BRANCH || 'main';
+const codeownersFile = process.env.CODEOWNERS_FILE || './CODEOWNERS.json';
 
-const codeownersFile = './CODEOWNERS.json';
 const identityNameIdCache = {};
 
 run();
