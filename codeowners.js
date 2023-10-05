@@ -39,15 +39,15 @@ async function run() {
     const dedupedOwnerIds = dedup(ownerIds);
     const reviewerMismatch =
       existingReviewers.size !== dedupedOwnerIds.length
-        || dedupedOwnerIds.every(e => !existingReviewers.has(e));
+      || dedupedOwnerIds.every(e => !existingReviewers.has(e));
 
     if (!reviewerMismatch) {
       return;
     }
 
     console.log(`Updating reviewers for path ${path}`);
+    policy.settings.requiredReviewerIds = dedupedOwnerIds;
 
-    policy.settings.requiredReviewerIds = ownerIds;
     return updateRequiredReviewerPolicy(policy);
   });
 
@@ -83,6 +83,7 @@ async function formatCodeowners(codeowners) {
   return pathmap;
 }
 
+// @@teamName -> teamName-{CODEOWNER_POSTFIX}
 function formatTeamName(name) {
   return `${name.replace('@@', '')}${CODEOWNER_POSTFIX}`;
 }
@@ -111,12 +112,9 @@ async function getTeamByName(name) {
 
   const url = `https://dev.azure.com/${ORG}/_apis/projects/${PROJECT}/teams/${name}`;
 
-  const headers = {
-    Accept: 'application/json; api-version=7.1-preview.3',
-    Authorization: `Bearer ${ACCESS_TOKEN}`,
-  };
-
-  const res = await fetch(url, { headers });
+  const res = await fetch(url, {
+    headers: getHeaders('7.1-preview.3'),
+  });
 
   if (!res.ok) {
     console.error(await res.text());
@@ -133,24 +131,18 @@ async function getUserIdByEmail(email) {
 
   const url = `https://vssps.dev.azure.com/${ORG}/_apis/graph/subjectquery`;
 
-  const headers = {
-    Accept: 'application/json; api-version=7.0-preview.1',
-    Authorization: `Bearer ${ACCESS_TOKEN}`,
-    'Content-Type': 'application/json',
-  };
-
   const data = {
     query: email,
     subjectKind: ['User'],
   };
 
-  const options = {
+  const headers = getHeaders('7.0-preview.1');
+
+  const res = await fetch(url, {
     headers,
     method: 'POST',
     body: JSON.stringify(data),
-  };
-
-  const res = await fetch(url, options);
+  });
 
   if (!res.ok) {
     console.error(await res.text());
@@ -159,9 +151,10 @@ async function getUserIdByEmail(email) {
   }
 
   const { value: [user] } = await res.json();
-  const subres = await fetch(user._links.storageKey.href, { headers });
 
-  const { value } = await subres.json();
+  const storageKeyResult = await fetch(user._links.storageKey.href, { headers });
+
+  const { value } = await storageKeyResult.json();
 
   return value;
 }
@@ -171,18 +164,15 @@ async function getRepoPolicies(repoId) {
 
   const url = `https://dev.azure.com/${ORG}/${PROJECT}/_apis/git/policy/configurations`;
 
-  const headers = {
-    Accept: 'application/json; api-version=7.1-preview.1',
-    Authorization: `Bearer ${ACCESS_TOKEN}`,
-  };
-
   const query = new URLSearchParams({
     refName: `refs/heads/${DEFAULT_BRANCH}`,
     policyType: 'fd2167ab-b0be-447a-8ec8-39368250530e',
     repositoryId: repoId,
   });
 
-  const res = await fetch(`${url}?${query}`, { headers });
+  const res = await fetch(`${url}?${query}`, {
+    headers: getHeaders('7.1-preview.1')
+  });
 
   if (!res.ok) {
     console.error(await res.text());
@@ -199,12 +189,6 @@ async function createRequiredReviewerPolicy(path, reviewerIds, repoId, branch) {
   console.log(`Creating required reviewer policy for ${path}`);
 
   const url = `https://dev.azure.com/${ORG}/${PROJECT}/_apis/policy/configurations`;
-
-  const headers = {
-    Accept: 'application/json; api-version=7.2-preview.1',
-    Authorization: `Bearer ${ACCESS_TOKEN}`,
-    'Content-Type': 'application/json',
-  };
 
   const data = {
     isBlocking: true,
@@ -223,13 +207,11 @@ async function createRequiredReviewerPolicy(path, reviewerIds, repoId, branch) {
     },
   };
 
-  const options = {
-    headers,
+  const res = await fetch(url, {
+    headers: getHeaders('7.2-preview.1'),
     method: 'POST',
     body: JSON.stringify(data),
-  };
-
-  const res = await fetch(url, options);
+  });
 
   if (!res.ok) {
     console.error(await res.text());
@@ -242,19 +224,11 @@ async function updateRequiredReviewerPolicy(policy) {
 
   delete policy.createdBy;
 
-  const headers = {
-    Accept: 'application/json; api-version=7.2-preview.1',
-    Authorization: `Bearer ${ACCESS_TOKEN}`,
-    'Content-Type': 'application/json',
-  };
-
-  const options = {
-    headers,
+  const res = await fetch(policy.url, {
+    headers: getHeaders('7.2-preview.1'),
     method: 'PUT',
     body: JSON.stringify(policy),
-  };
-
-  const res = await fetch(policy.url, options);
+  });
 
   if (!res.ok) {
     console.error(await res.text());
@@ -267,20 +241,22 @@ async function deletePolicyConfiguration(id) {
 
   const url = `https://dev.azure.com/${ORG}/${PROJECT}/_apis/policy/configurations/${id}`;
 
-  const headers = {
-    Accept: 'application/json; api-version=7.2-preview.1',
-    Authorization: `Bearer ${ACCESS_TOKEN}`,
-  };
-
-  const options = {
-    headers,
+  const res = await fetch(url, {
+    headers: getHeaders('7.2-preview.1'),
     method: 'DELETE'
-  };
-
-  const res = await fetch(url, options);
+  });
 
   if (!res.ok) {
     console.error(await res.text());
     throw new Error('Could not update required reviewer policy');
   }
 }
+
+function getHeaders(apiVersion) {
+  return {
+    Accept: `application/json; api-version=${apiVersion}`,
+    Authorization: `Bearer ${ACCESS_TOKEN}`,
+    'Content-Type': 'application/json',
+  };
+}
+
