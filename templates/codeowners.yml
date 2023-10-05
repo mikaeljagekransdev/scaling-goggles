@@ -27,4 +27,4 @@ steps:
       REPO_ID: '$(Build.Repository.ID)'
       DEFAULT_BRANCH: 'main'
       CODEOWNER_POSTFIX: '-codeowners'
-      CODEOWNERS_FILE: './CODEOWNERS.json'
+      CODEOWNERS_FILE: './test-app/CODEOWNERS.json'
