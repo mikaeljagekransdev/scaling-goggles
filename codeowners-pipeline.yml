@@ -6,6 +6,17 @@ trigger:
     include:
     - CODEOWNERS.json
 
+resources:
+  repositories:
+    - repository: test-app
+      type: git
+      name: SHB-test/test-app
+      ref: main
+      trigger:
+        paths:
+          include:
+            - CODEOWNERS.json
+
 pool:
   vmImage: ubuntu-22.04
 
@@ -20,6 +31,8 @@ stages:
 
     - script: az config set extension.use_dynamic_install=yes_without_prompt
       displayName: 'configure azure cli'
+
+    - script: env
 
     - task: AzureCLI@2
       enabled: false
