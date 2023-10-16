@@ -26,8 +26,9 @@ stages:
   - job: Build
     steps:
     - checkout: self
-      clean: true
       persistCredentials: true
+
+    - checkout: test-app
 
     - script: az config set extension.use_dynamic_install=yes_without_prompt
       displayName: 'configure azure cli'
