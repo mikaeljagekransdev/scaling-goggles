@@ -7,8 +7,7 @@ trigger:
     - CODEOWNERS.json
 
 pool:
-  name: Default
-  vmImage: azdo-agent
+  vmImage: ubuntu-22.04
 
 stages:
 - stage: Build
@@ -23,6 +22,7 @@ stages:
       displayName: 'configure azure cli'
 
     - task: AzureCLI@2
+      enabled: false
       inputs:
         azureSubscription: codeowner-admin
         scriptType: bash
