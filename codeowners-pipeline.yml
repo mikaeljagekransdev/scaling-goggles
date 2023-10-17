@@ -33,7 +33,6 @@ stages:
         
     - script: |
         git clone $repo $dest
-      enabled: false
       env:
         repo: $(Build.Repository.Name)
         dest: $(Build.SourcesDirectory)/$(Build.Repository.Name)
