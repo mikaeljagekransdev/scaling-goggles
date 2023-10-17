@@ -7,9 +7,10 @@ trigger:
     - CODEOWNERS.json
 
 variables:
-  repos:
-  - pipeline-commons
-  - test-app
+  - name: repos
+    value:
+    - pipeline-commons
+    - test-app
 
 resources:
   repositories:
