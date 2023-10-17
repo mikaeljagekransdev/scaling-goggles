@@ -6,6 +6,21 @@ trigger:
     include:
     - CODEOWNERS.json
 
+variables:
+  repos: ['pipeline-commons', 'test-app']
+
+resources:
+  repositories:
+  - ${{ each repo in parameters.repos }}:
+    - repository: ${{ repo }}
+      type: git
+      name: SHB-test/${{ repo }}
+      ref: main
+      trigger:
+        paths:
+          include:
+          - CODEOWNERS.json
+
 pool:
   vmImage: ubuntu-22.04
 
