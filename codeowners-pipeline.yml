@@ -31,8 +31,6 @@ stages:
     - script: az config set extension.use_dynamic_install=yes_without_prompt
       displayName: 'configure azure cli'
         
-    - checkout: ${{ variables.Build.Repository.Name }}
-
     - script: |
         git clone $repo $dest
       enabled: false
