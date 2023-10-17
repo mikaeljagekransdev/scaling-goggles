@@ -8,14 +8,14 @@ trigger:
 
 resources:
   repositories:
-    - repository: test-app
-      type: git
-      name: SHB-test/test-app
-      ref: main
-      trigger:
-        paths:
-          include:
-            - CODEOWNERS.json
+  - repository: test-app
+    type: git
+    name: SHB-test/test-app
+    ref: main
+    trigger:
+      paths:
+        include:
+        - CODEOWNERS.json
 
 pool:
   vmImage: ubuntu-22.04
@@ -28,14 +28,11 @@ stages:
     - checkout: self
       persistCredentials: true
 
+    - checkout: test-app
+      enabled: eq(variables['Build.Repository.Name'], 'test-app')
+
     - script: az config set extension.use_dynamic_install=yes_without_prompt
       displayName: 'configure azure cli'
-        
-    - script: |
-        git clone $repo $dest
-      env:
-        repo: $(Build.Repository.Name)
-        dest: $(Build.SourcesDirectory)/$(Build.Repository.Name)
 
     - script: ls -la
 
