@@ -7,7 +7,7 @@ parameters:
 
 resources:
   repositories:
-    - repository: piepline-commons
+    - repository: pipeline-commons
       type: git
       name: SHB-test/pipeline-commons
       ref: main
