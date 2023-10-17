@@ -1,0 +1,45 @@
+parameters:
+- name: repos
+  type: object
+  default:
+    - pipeline-commons
+    - test-app
+
+resources:
+  repositories:
+  - ${{ each repo in parameters.repos }}:
+    - repository: ${{ repo }}
+      type: git
+      name: SHB-test/${{ repo }}
+      ref: main
+      trigger:
+        paths:
+          include:
+          - CODEOWNERS.json
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    steps:
+    - checkout: self
+      persistCredentials: true
+
+    - ${{ each repo in parameters.repos }}:
+      - checkout: ${{ repo }}
+        enabled: eq(variables['Build.Repository.Name'], ${{ repo }})
+
+    - script: az config set extension.use_dynamic_install=yes_without_prompt
+      displayName: 'configure azure cli'
+
+    - script: ls -la
+
+    - script: env
+
+    - task: AzureCLI@2
+      enabled: false
+      inputs:
+        azureSubscription: codeowner-admin
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: ./codeowners.py -r $(Build.Repository.ID)

@@ -6,51 +6,8 @@ trigger:
     include:
     - CODEOWNERS.json
 
-variables:
-  - name: repos
-    value:
-    - pipeline-commons
-    - test-app
-
-resources:
-  repositories:
-  - ${{ each repo in variables.repos }}:
-    - repository: ${{ repo }}
-      type: git
-      name: SHB-test/${{ repo }}
-      ref: main
-      trigger:
-        paths:
-          include:
-          - CODEOWNERS.json
-
 pool:
   vmImage: ubuntu-22.04
 
-stages:
-- stage: Build
-  jobs:
-  - job: Build
-    steps:
-    - checkout: self
-      persistCredentials: true
-
-    - ${{ each repo in variables.repos }}:
-      - checkout: ${{ repo }}
-        enabled: eq(variables['Build.Repository.Name'], ${{ repo }})
-
-    - script: az config set extension.use_dynamic_install=yes_without_prompt
-      displayName: 'configure azure cli'
-
-    - script: ls -la
-
-    - script: env
-
-    - task: AzureCLI@2
-      enabled: false
-      inputs:
-        azureSubscription: codeowner-admin
-        scriptType: bash
-        scriptLocation: inlineScript
-        inlineScript: ./codeowners.py -r $(Build.Repository.ID)
-
+extends:
+  template: codeowners-pipeline-tmpl.yml
