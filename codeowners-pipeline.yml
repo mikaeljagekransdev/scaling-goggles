@@ -25,7 +25,10 @@ stages:
   jobs:
   - job: Build
     steps:
-    - checkout: ${{ variables.Build.RepositoryName }}
+    - checkout: self
+      persistCredentials: true
+
+    - checkout: ${{ variables.Build.Repository.Name }}
       persistCredentials: true
 
     - script: az config set extension.use_dynamic_install=yes_without_prompt
