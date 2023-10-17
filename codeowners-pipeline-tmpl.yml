@@ -7,10 +7,9 @@ parameters:
 
 resources:
   repositories:
-  - ${{ each repo in ['pipeline-commons', 'test-app'] }}:
-    - repository: ${{ repo }}
+    - repository: test-app
       type: git
-      name: SHB-test/${{ repo }}
+      name: SHB-test/test-app
       ref: main
       trigger:
         paths:
