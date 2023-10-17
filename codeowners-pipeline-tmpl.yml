@@ -2,12 +2,12 @@ parameters:
 - name: repos
   type: object
   default:
-    - pipeline-commons
-    - test-app
+  - pipeline-commons
+  - test-app
 
 resources:
   repositories:
-  - ${{ each repo in parameters.repos }}:
+  - ${{ each repo in ['pipeline-commons', 'test-app'] }}:
     - repository: ${{ repo }}
       type: git
       name: SHB-test/${{ repo }}
