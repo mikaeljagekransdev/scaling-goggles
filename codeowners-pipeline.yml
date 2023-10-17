@@ -28,11 +28,16 @@ stages:
     - checkout: self
       persistCredentials: true
 
-    - checkout: ${{ variables.Build.Repository.Name }}
-      persistCredentials: true
-
     - script: az config set extension.use_dynamic_install=yes_without_prompt
       displayName: 'configure azure cli'
+
+    - script: |
+        git clone $repo $dest
+      env:
+        repo: $(Build.Repository.Name)
+        dest: $(Build.SourcesDirectory)/$(Build.Repository.Name)
+
+    - script: ls -la
 
     - script: env
 
