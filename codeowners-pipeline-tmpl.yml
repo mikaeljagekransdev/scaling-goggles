@@ -7,6 +7,15 @@ parameters:
 
 resources:
   repositories:
+    - repository: piepline-commons
+      type: git
+      name: SHB-test/pipeline-commons
+      ref: main
+      trigger:
+        paths:
+          include:
+          - CODEOWNERS.json
+
     - repository: test-app
       type: git
       name: SHB-test/test-app
