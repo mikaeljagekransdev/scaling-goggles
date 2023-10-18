@@ -23,9 +23,13 @@ stages:
         ls -la test-app
 
     - task: AzureCLI@2
-      enabled: false
       inputs:
         azureSubscription: codeowner-admin
         scriptType: bash
         scriptLocation: inlineScript
-        inlineScript: ./codeowners.py -r $(Build.Repository.ID)
+        inlineScript: ./pipeline-commons/codeowners.js
+      env:
+        ORG: jagekransdev
+        PROJECT: SHB-test
+        REPO_ID: $(Build.Repository.ID)
+        CODEOWNERS_FILE: ./$(Build.Repository.Name)/CODEOWNERS.json
