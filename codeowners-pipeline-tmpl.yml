@@ -12,7 +12,7 @@ stages:
 
     - ${{ each repo in parameters.repos }}:
       - checkout: ${{ repo }}
-        condition: eq(variables['Build.Repository.Name'], '${{ repo }}')
+        # condition: eq(variables['Build.Repository.Name'], '${{ repo }}')
 
     - script: az config set extension.use_dynamic_install=yes_without_prompt
       displayName: 'configure azure cli'
