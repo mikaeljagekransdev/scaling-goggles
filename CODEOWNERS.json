@@ -12,7 +12,7 @@
   "functionalBlocks": {
     "@@pipeline": {
       "owners": ["@@teamFirst"],
-      "additionalApprovers": ["@@teamSecond"]
+      "additionalApprovers": ["@@teamSecond", "mikael@jagekrans.dev"]
     },
     "@@athenaOwnershipInfo": {
       "owners": ["mikael@jagekrans.dev"],
