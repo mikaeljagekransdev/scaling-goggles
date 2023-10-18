@@ -41,11 +41,6 @@ stages:
       displayName: 'configure azure cli'
 
     - script: ls -la
-    - script: ls -la test-app
-
-    - script: du -sh *
-
-    - script: env
 
     - task: AzureCLI@2
       enabled: false
