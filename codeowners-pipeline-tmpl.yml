@@ -1,29 +1,6 @@
 parameters:
 - name: repos
   type: object
-  default:
-  - pipeline-commons
-  - test-app
-
-resources:
-  repositories:
-    - repository: pipeline-commons
-      type: git
-      name: SHB-test/pipeline-commons
-      ref: main
-      trigger:
-        paths:
-          include:
-          - CODEOWNERS.json
-
-    - repository: test-app
-      type: git
-      name: SHB-test/test-app
-      ref: main
-      trigger:
-        paths:
-          include:
-          - CODEOWNERS.json
 
 stages:
 - stage: Build

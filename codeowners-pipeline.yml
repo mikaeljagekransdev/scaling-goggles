@@ -1,5 +1,29 @@
+resources:
+  repositories:
+  - repository: pipeline-commons
+    type: git
+    name: SHB-test/pipeline-commons
+    ref: main
+    trigger:
+      paths:
+        include:
+        - CODEOWNERS.json
+
+  - repository: test-app
+    type: git
+    name: SHB-test/test-app
+    ref: main
+    trigger:
+      paths:
+        include:
+        - CODEOWNERS.json
+
 pool:
   vmImage: ubuntu-22.04
 
 extends:
   template: codeowners-pipeline-tmpl.yml
+  parameters:
+    repos:
+    - pipeline-commons
+    - test-app
