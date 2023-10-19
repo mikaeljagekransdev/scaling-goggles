@@ -3,7 +3,7 @@ resources:
   - repository: pipeline-commons
     type: git
     name: SHB-test/pipeline-commons
-    ref: main
+    ref: refs/heads/main
     trigger:
       paths:
         include:
@@ -12,7 +12,7 @@ resources:
   - repository: test-app
     type: git
     name: SHB-test/test-app
-    ref: main
+    ref: refs/heads/main
     trigger:
       paths:
         include:
