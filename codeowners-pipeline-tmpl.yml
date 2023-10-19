@@ -17,11 +17,6 @@ stages:
     - script: az config set extension.use_dynamic_install=yes_without_prompt
       displayName: 'configure azure cli'
 
-    - script: |
-        ls -la
-        ls -la pipeline-commons
-        ls -la test-app
-
     - task: AzureCLI@2
       inputs:
         azureSubscription: codeowner-admin

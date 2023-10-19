@@ -3,7 +3,6 @@
 const fs = require('fs');
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN;
-const CODEOWNER_POSTFIX = process.env.CODEOWNER_POSTFIX || '-codeowners';
 const ORG = process.env.ORG || 'jagekransdev';
 const PROJECT = process.env.PROJECT || 'SHB-test';
 const REPO_ID = process.env.REPO_ID || 'f9205fad-6169-452a-b070-09ef239c891b';
@@ -11,6 +10,7 @@ const DEFAULT_BRANCH = process.env.DEFAULT_BRANCH || 'main';
 const codeownersFile = process.env.CODEOWNERS_FILE || './CODEOWNERS.json';
 
 const identityNameIdCache = {};
+let groups = null;
 
 run();
 
@@ -37,9 +37,11 @@ async function run() {
 
     const existingReviewers = new Set(policy.settings.requiredReviewerIds);
     const dedupedOwnerIds = dedup(ownerIds);
+
+    // Calculate set difference between dedupedOwnerIds and existingReviewers
     const reviewerMismatch =
       existingReviewers.size !== dedupedOwnerIds.length
-      || dedupedOwnerIds.every(e => !existingReviewers.has(e));
+      || dedupedOwnerIds.filter(e => !existingReviewers.has(e)).length > 0;
 
     if (!reviewerMismatch) {
       return;
@@ -73,25 +75,28 @@ async function formatCodeowners(codeowners) {
     for (const [path, blockName] of Object.entries(f)) {
       const { owners, additionalApprovers } = blocks[blockName];
 
-      // Create a deduplicated union of teams and users
+      // Create a deduplicated union of groups and users
       const identityNames = Array.from(new Set([...owners, ...additionalApprovers]));
 
       pathmap[path] = await Promise.all(identityNames.map(getIdentityId));
     }
   }
 
+  console.log(pathmap);
+
   return pathmap;
 }
 
-// @@teamName -> teamName-{CODEOWNER_POSTFIX}
-function formatTeamName(name) {
-  return `${name.replace('@@', '')}${CODEOWNER_POSTFIX}`;
+function formatGroupName(name) {
+  return `SHB-Code Approvers ${name.replace('@@', '')}`;
 }
 
 async function getIdentityId(name) {
   console.log(`Retrieving identity id for ${name}`);
 
-  if ((cachedId = identityNameIdCache[name]) != null) {
+  const cachedId = identityNameIdCache[name];
+
+  if (cachedId != null) {
     console.log(`Found id for ${name} in cache`);
 
     return cachedId;
@@ -99,7 +104,7 @@ async function getIdentityId(name) {
 
   const id =
     name.startsWith('@@')
-      ? (await getTeamByName(formatTeamName(name))).id
+      ? (await getGroupByName(formatGroupName(name))).originId
       : (await getUserIdByEmail(name));
 
   identityNameIdCache[name] = id;
@@ -107,25 +112,46 @@ async function getIdentityId(name) {
   return id;
 }
 
-async function getTeamByName(name) {
-  console.log(`Retrieving team ${name}`);
+// vso.graph required
+async function getGroups() {
+  if (groups) {
+    return groups;
+  }
 
-  const url = `https://dev.azure.com/${ORG}/_apis/projects/${PROJECT}/teams/${name}`;
+  console.log('Retrieving groups');
+
+  const url = `https://vssps.dev.azure.com/${ORG}/_apis/graph/groups`;
 
   const res = await fetch(url, {
-    headers: getHeaders('7.1-preview.3'),
+    headers: getHeaders('7.1-preview.1'),
   });
 
   if (!res.ok) {
     console.error(await res.text());
 
-    throw new Error(`Couldn't get team "${name}"`);
+    throw new Error("Couldn't get groups");
   }
 
-  return res.json();
+  const { value } = await res.json();
+
+  groups = value;
+
+  return value;
 }
 
-// TODO: review this function
+async function getGroupByName(name) {
+  console.log(`Retrieving group ${name}`);
+
+  const groups = await getGroups();
+  const group = groups.find(g => g.displayName === name);
+
+  if (group == null) {
+    throw new Error(`Group ${name} not found`);
+  }
+
+  return group;
+}
+
 async function getUserIdByEmail(email) {
   console.log(`Retrieving user id for ${email}`);
 
@@ -215,6 +241,7 @@ async function createRequiredReviewerPolicy(path, reviewerIds, repoId, branch) {
 
   if (!res.ok) {
     console.error(await res.text());
+
     throw new Error('Could not create required reviewer policy');
   }
 }
@@ -232,6 +259,7 @@ async function updateRequiredReviewerPolicy(policy) {
 
   if (!res.ok) {
     console.error(await res.text());
+
     throw new Error('Could not update required reviewer policy');
   }
 }
