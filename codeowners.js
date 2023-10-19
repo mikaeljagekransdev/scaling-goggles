@@ -57,7 +57,7 @@ async function run() {
   const codeownerPathsSet = new Set(codeownerPaths);
   const extraneousPolicies = policies.filter(p => !codeownerPathsSet.has(p.settings?.filenamePatterns[0]));
 
-  const deletePolicyOps = extraneousPolicies.map(({id}) => deletePolicyConfiguration(id))
+  const deletePolicyOps = extraneousPolicies.map(({id}) => deletePolicyConfiguration(id));
 
   await Promise.all([...createAndUpdatePolicyOps, ...deletePolicyOps]);
 }
@@ -81,8 +81,6 @@ async function formatCodeowners(codeowners) {
       pathmap[path] = await Promise.all(identityNames.map(getIdentityId));
     }
   }
-
-  console.log(pathmap);
 
   return pathmap;
 }
