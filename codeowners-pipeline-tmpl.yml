@@ -4,7 +4,7 @@ parameters:
 
 stages:
 - stage: Build
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')  # TODO: change to master after move
   jobs:
   - job: Build
     steps:
@@ -29,3 +29,4 @@ stages:
         PROJECT: SHB-test
         REPO_ID: $(Build.Repository.ID)
         CODEOWNERS_FILE: ./$(Build.Repository.Name)/CODEOWNERS.json
+        ACCESS_TOKEN: $(System.AccessToken)
