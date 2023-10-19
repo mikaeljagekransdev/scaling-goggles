@@ -5,7 +5,7 @@ resources:
     name: SHB-test/pipeline-commons
     ref: main
     trigger:
-      branch:
+      branches:
         include:
         - main
       paths:
@@ -17,7 +17,7 @@ resources:
     name: SHB-test/test-app
     ref: main
     trigger:
-      branch:
+      branches:
         include:
         - main
       paths:
