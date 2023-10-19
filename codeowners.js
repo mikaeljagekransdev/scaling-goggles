@@ -73,6 +73,10 @@ async function formatCodeowners(codeowners) {
 
   for (const f of codeowners.filemap) {
     for (const [path, blockName] of Object.entries(f)) {
+      if (path === "##") {
+        continue;
+      }
+
       const { owners, additionalApprovers } = blocks[blockName];
 
       // Create a deduplicated union of groups and users
