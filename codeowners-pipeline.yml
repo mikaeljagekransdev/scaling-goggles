@@ -3,8 +3,11 @@ resources:
   - repository: pipeline-commons
     type: git
     name: SHB-test/pipeline-commons
-    ref: refs/heads/main
+    ref: main
     trigger:
+      branch:
+        include:
+        - main
       paths:
         include:
         - CODEOWNERS.json
@@ -12,8 +15,11 @@ resources:
   - repository: test-app
     type: git
     name: SHB-test/test-app
-    ref: refs/heads/main
+    ref: main
     trigger:
+      branch:
+        include:
+        - main
       paths:
         include:
         - CODEOWNERS.json
